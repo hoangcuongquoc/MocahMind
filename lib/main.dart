@@ -1,7 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app/routes/app_pages.dart';
+import 'firebase_options.dart';
 
 
 
@@ -12,6 +14,11 @@ void main() async{
     url: 'https://gtoiwalwudfwpccnqfvm.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0b2l3YWx3dWRmd3BjY25xZnZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwNzY3OTIsImV4cCI6MjA2MzY1Mjc5Mn0.5_TyPAEKPA7AUBNJpySztq5ZZDzq9J1995ffOfL8Kss',
   );
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,);
+
+
+
   runApp(Myapp());
 }
 

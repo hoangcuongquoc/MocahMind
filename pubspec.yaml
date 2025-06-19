@@ -37,6 +37,8 @@ dependencies:
   get: ^4.7.2
   google_fonts: ^6.2.1
   supabase_flutter: ^2.9.0
+  firebase_core: ^3.14.0
+  google_sign_in: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +61,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/song/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

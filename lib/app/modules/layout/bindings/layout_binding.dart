@@ -3,6 +3,8 @@ import 'package:mochamind/app/modules/category/controllers/category_controller.d
 import 'package:mochamind/app/modules/home/controllers/home_controller.dart';
 
 import '../../playlist/controllers/playlist_controller.dart';
+import '../../profile/bindings/profile_binding.dart';
+import '../../profile/controllers/profile_controller.dart';
 import '../../searching/controllers/searching_controller.dart';
 import '../controllers/layout_controller.dart';
 
@@ -24,5 +26,11 @@ class LayoutBinding extends Bindings {
     Get.lazyPut<SearchingController>(
             ()=>SearchingController()
     );
+    Get.lazyPut<ProfileController>(
+          () => ProfileController(),
+
+    );ProfileBinding().dependencies();
+
+
   }
 }

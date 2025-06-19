@@ -9,6 +9,9 @@ abstract class Routes {
   static const PLAYLIST = _Paths.PLAYLIST;
   static const SEARCH = _Paths.SEARCH;
   static const SEARCHING = _Paths.SEARCHING;
+  static const PROFILE = _Paths.PROFILE;
+  static const LOGIN = _Paths.LOGIN;
+
 }
 
 abstract class _Paths {
@@ -19,4 +22,7 @@ abstract class _Paths {
   static const PLAYLIST = '/playlist';
   static const SEARCH = '/search';
   static const SEARCHING = '/searching';
+  static const PROFILE = '/profile';
+  static const LOGIN = '/login';
+
 }

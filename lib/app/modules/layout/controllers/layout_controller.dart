@@ -5,12 +5,16 @@ class LayoutController extends GetxController with GetSingleTickerProviderStateM
   //TODO: Implement LayoutController
   late TabController tabController;
   var currentIndex = 0.obs;
+
+  final RxBool isPlaying = false.obs;
+  final RxBool isHovered = false.obs;
+
   final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
 
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(length: 5, vsync: this);
     tabController.addListener(() {
       currentIndex.value = tabController.index;
     });
@@ -31,4 +35,23 @@ class LayoutController extends GetxController with GetSingleTickerProviderStateM
     currentIndex.value = index;
     tabController.animateTo(index);
   }
+
+
+
+  void togglePlay() {
+    isPlaying.value = !isPlaying.value;
+  }
+
+  void skipPrevious() {
+    print('Skipped to previous song');
+  }
+
+  void skipNext() {
+    print('Skipped to next song');
+  }
+
+  void onHover(bool isHovering) {
+    isHovered.value = isHovering;
+  }
+
 }
