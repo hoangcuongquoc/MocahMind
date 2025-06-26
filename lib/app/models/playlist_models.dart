@@ -1,40 +1,47 @@
 class Playlist {
   final int id;
-  final String uid;
   final String name;
   final String description;
   final String picture;
-  final bool is_pined;
+  final bool isPined;
+  final List<String> songIds;
+  final String? createdAt;
+  final String? userId;
 
   Playlist({
     required this.id,
-    required this.uid,
     required this.name,
     required this.description,
     required this.picture,
-    required this.is_pined,
+    required this.isPined,
+    required this.songIds,
+    this.createdAt,
+    this.userId,
   });
-
 
   factory Playlist.fromJson(Map<String, dynamic> json) {
     return Playlist(
-      id: json['id'] as int,
-      uid: json['uid'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      picture: json['picture'] as String,
-      is_pined: json['is_pined'] as bool,
+      id: json['id'],
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      picture: json['picture'] ?? '',
+      isPined: json['is_pined'] ?? false,
+      songIds: List<String>.from(json['song_ids'] ?? []),
+      createdAt: json['created_at'],
+      userId: json['user_id'],
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'uid': uid,
       'name': name,
       'description': description,
       'picture': picture,
-      'is_pined': is_pined,
+      'is_pined': isPined,
+      'song_ids': songIds,
+      'created_at': createdAt,
+      'user_id': userId,
     };
   }
-
 }

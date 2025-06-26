@@ -1,12 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mochamind/app/modules/home/controllers/home_controller.dart';
+import 'package:mochamind/app/modules/searching/controllers/searching_controller.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'app/modules/category/controllers/category_controller.dart';
+import 'app/modules/layout/controllers/layout_controller.dart';
+import 'app/modules/playlist/controllers/playlist_controller.dart';
+import 'app/modules/profile/controllers/profile_controller.dart';
 import 'app/routes/app_pages.dart';
+import 'app/widgets/audio_controller.dart';
 import 'firebase_options.dart';
-
-
-
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +23,14 @@ void main() async{
 
 
 
+  Get.put(ProfileController()); // hoặc Get.lazyPut(() => ProfileController());
+  Get.put(HomeController());
+  // Get.put(AudioController());
+  Get.put(CategoryController());
+
+  Get.put(SearchingController());
+
+  Get.put(PlaylistController());
   runApp(Myapp());
 }
 

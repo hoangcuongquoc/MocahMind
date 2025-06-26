@@ -3,34 +3,32 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
-  //TODO: Implement ProfileController
-
   final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
   void increment() => count.value++;
 
-  Future<void> SignOut() async {
-    await Supabase.instance.client.auth.signOut();
-    Get.snackbar(
-      "Sign Out",
-      "You have successfully signed out",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      duration: Duration(seconds: 2),
-    );
+  Future<void> signOut() async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+
+      Get.snackbar(
+        "Sign Out",
+        "You have successfully signed out",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+
+      Get.offAllNamed('/login');
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Sign out failed: $e",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
 }

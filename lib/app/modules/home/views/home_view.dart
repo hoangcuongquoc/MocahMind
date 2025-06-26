@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mochamind/app/models/songs_models.dart';
+import '../../../widgets/audio_controller.dart';
+import '../../layout/controllers/layout_controller.dart';
+import '../../layout/views/layout_view.dart';
 import '../controllers/home_controller.dart';
-
+import '../../playlist/controllers/playlist_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -10,10 +13,14 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Music'),
+        title: const Text(
+          'Music',
+          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+        ),
         elevation: 0,
+        backgroundColor: Colors.black,
       ),
       body: RefreshIndicator(
         onRefresh: controller.fetchSongs,
@@ -29,10 +36,13 @@ class HomeView extends GetView<HomeController> {
               SliverToBoxAdapter(
                 child: _FeaturedSongCard(song: songs.first),
               ),
-              SliverToBoxAdapter(
-                child: _SectionHeader(
-                  title: 'Popular Songs',
-                  onShowAll: () {},
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                  child: Text(
+                    'Popular Songs',
+                    style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
               SliverList.separated(
@@ -42,8 +52,10 @@ class HomeView extends GetView<HomeController> {
                     song: song,
                     index: index,
                     onTap: () {
-                      // TODO: Play song logic
                       controller.currentSongIndex.value = index;
+                      final layout = Get.find<LayoutController>();
+                      layout.songs.assignAll(controller.songs);
+                      layout.playSong(index);
                     },
                   );
                 },
@@ -58,6 +70,7 @@ class HomeView extends GetView<HomeController> {
   }
 }
 
+// ✅ Featured song card widget
 class _FeaturedSongCard extends StatelessWidget {
   const _FeaturedSongCard({required this.song});
 
@@ -75,7 +88,7 @@ class _FeaturedSongCard extends StatelessWidget {
               aspectRatio: 16 / 9,
               child: song.image_url.isNotEmpty
                   ? Image.network(song.image_url, fit: BoxFit.cover)
-                  : Container(color: Colors.grey[300]),
+                  : Container(color: Colors.white),
             ),
             Positioned(
               left: 16,
@@ -93,10 +106,7 @@ class _FeaturedSongCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     song.performer,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: Colors.white70),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
                   ),
                 ],
               ),
@@ -108,37 +118,13 @@ class _FeaturedSongCard extends StatelessWidget {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, this.onShowAll});
-
-  final String title;
-  final VoidCallback? onShowAll;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-      child: Row(
-        children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(width: 4),
-          const Icon(Icons.arrow_outward, size: 16),
-          const Spacer(),
-          TextButton(
-            onPressed: onShowAll,
-            child: const Text('Show all'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
+// ✅ SongTile widget inline
 class _SongTile extends StatelessWidget {
-  const _SongTile({required this.song, required this.index, required this.onTap});
+  const _SongTile({
+    required this.song,
+    required this.index,
+    required this.onTap,
+  });
 
   final SongsModel song;
   final int index;
@@ -153,10 +139,95 @@ class _SongTile extends StatelessWidget {
             ? Image.network(song.image_url, width: 48, height: 48, fit: BoxFit.cover)
             : Container(width: 48, height: 48, color: Colors.grey[300]),
       ),
-      title: Text(song.title),
-      subtitle: Text(song.performer),
-      trailing: const Icon(Icons.more_vert),
+      title: Text(song.title, style: const TextStyle(color: Colors.white)),
+      subtitle: Text(song.performer, style: const TextStyle(color: Colors.white54)),
+      trailing: IconButton(
+        icon: const Icon(Icons.more_vert, color: Colors.white70),
+        onPressed: () => _showAddToPlaylistSheet(context, song),
+      ),
       onTap: onTap,
+    );
+  }
+
+  void _showAddToPlaylistSheet(BuildContext context, SongsModel song) async {
+    final playlistCtrl = Get.isRegistered<PlaylistController>()
+        ? Get.find<PlaylistController>()
+        : Get.put(PlaylistController());
+
+    await playlistCtrl.fetchPlaylists();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF202020),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return SizedBox(
+          height: 400,
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text('➕ Thêm vào Playlist',
+                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+              const Divider(height: 1),
+              Expanded(
+                child: Obx(() {
+                  final lists = playlistCtrl.playlists;
+
+                  if (lists.isEmpty) {
+                    return const Center(
+                      child: Text('Bạn chưa có playlist nào',
+                          style: TextStyle(color: Colors.white54)),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: lists.length,
+                    itemBuilder: (_, i) {
+                      final p = lists[i];
+                      return ListTile(
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            p.picture,
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              width: 48,
+                              height: 48,
+                              color: Colors.grey[700],
+                              child: const Icon(Icons.queue_music, color: Colors.white54),
+                            ),
+                          ),
+                        ),
+                        title: Text(p.name, style: const TextStyle(color: Colors.white)),
+                        subtitle: Text(
+                          p.description,
+                          style: const TextStyle(color: Colors.white60, fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await playlistCtrl.addSongToPlaylist(p.id, song.id);
+                          Get.snackbar('Đã thêm', 'Đã thêm bài hát vào "${p.name}"',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.grey[900],
+                              colorText: Colors.white);
+                        },
+                      );
+                    },
+                  );
+                }),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
