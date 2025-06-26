@@ -53,8 +53,8 @@ class SongDetailView extends GetView<SongDetailController> {
 
                 // Ảnh bìa
                 Container(
-                  width: 280,
-                  height: 280,
+                  width: 320,
+                  height: 320,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(24),
                     image: DecorationImage(
@@ -64,7 +64,7 @@ class SongDetailView extends GetView<SongDetailController> {
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 30),
 
                 // Tên bài hát + performer dưới ảnh bìa
                 Column(
@@ -74,16 +74,16 @@ class SongDetailView extends GetView<SongDetailController> {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 22,
+                        fontSize: 25,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 3),
                     Text(
                       song.performer,
                       style: const TextStyle(
                         color: Colors.white70,
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -117,6 +117,7 @@ class SongDetailView extends GetView<SongDetailController> {
                     ],
                   ),
                 ),
+
 
                 const SizedBox(height: 24),
 
