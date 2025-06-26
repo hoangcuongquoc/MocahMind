@@ -28,10 +28,12 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static final INITIAL =
-      Supabase.instance.client.auth.currentSession?.user != null
-          ? Routes.LAYOUT
-          : Routes.LOGIN;
+  // static final INITIAL =
+  //     Supabase.instance.client.auth.currentSession?.user != null
+  //         ? Routes.LAYOUT
+  //         : Routes.LOGIN;
+
+  static final INITIAL = Routes.LAYOUT;
 
   static final routes = [
     GetPage(

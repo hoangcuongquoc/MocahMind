@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../layout/controllers/layout_controller.dart';
-import '../../layout/views/layout_view.dart';
 import '../controllers/song_detail_controller.dart';
 
 class SongDetailView extends GetView<SongDetailController> {
@@ -17,76 +16,82 @@ class SongDetailView extends GetView<SongDetailController> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Ảnh nền full màn hình
+          // Ảnh nền
           Image.network(
             song.image_url,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) =>
-                Container(color: Colors.black),
+            errorBuilder: (_, __, ___) => Container(color: Colors.black),
           ),
 
-          // Lớp phủ mờ
+          // Lớp phủ tối
           Container(color: Colors.black.withOpacity(0.6)),
 
-          // AppBar tùy chỉnh
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Get.back(),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      song.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Nội dung điều khiển
+          // Nội dung
           Obx(() {
             final pos = layout.position.value;
             final dur = layout.duration.value;
 
-            final max =
-            dur.inMilliseconds > 0 ? dur.inMilliseconds.toDouble() : 1.0;
-            final value =
-            pos.inMilliseconds.clamp(0, max).toDouble();
+            final max = dur.inMilliseconds > 0
+                ? dur.inMilliseconds.toDouble()
+                : 1.0;
+            final value = pos.inMilliseconds.clamp(0, max).toDouble();
 
             return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 100),
-                Text(
-                  song.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(height: 40),
+
+                // Icon Back
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 30),
+                    onPressed: () => Get.back(),
                   ),
                 ),
-                Text(
-                  song.performer,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 18,
+
+                const Spacer(),
+
+                // Ảnh bìa
+                Container(
+                  width: 280,
+                  height: 280,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    image: DecorationImage(
+                      image: NetworkImage(song.image_url),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
+
                 const SizedBox(height: 32),
 
-                // Slider thời gian
+                // Tên bài hát + performer dưới ảnh bìa
+                Column(
+                  children: [
+                    Text(
+                      song.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      song.performer,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Thanh Slider
                 Slider(
                   value: value,
                   min: 0,
@@ -95,74 +100,67 @@ class SongDetailView extends GetView<SongDetailController> {
                     layout.seekTo(Duration(milliseconds: val.toInt()));
                   },
                   activeColor: Colors.white,
-                  inactiveColor: Colors.white24,
+                  inactiveColor: Colors.white30,
                 ),
+
+                // Thời gian hiện tại bên trái
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         _formatTime(pos),
                         style: const TextStyle(
-                          color: Colors.white60,
-                          fontSize: 12,
-                        ),
-                      ),
-                      Text(
-                        _formatTime(dur),
-                        style: const TextStyle(
-                          color: Colors.white60,
-                          fontSize: 12,
-                        ),
+                            color: Colors.white60, fontSize: 12),
                       ),
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 24),
 
-                // Nút điều khiển
+                // Điều khiển phát nhạc
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.shuffle, color: Colors.white60),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.skip_previous,
-                          color: Colors.white, size: 32),
+                      icon: const Icon(Icons.skip_previous_rounded, size: 30),
+                      color: Colors.white,
                       onPressed: layout.skipPrevious,
                     ),
+                    const SizedBox(width: 20),
                     InkWell(
                       onTap: layout.togglePlay,
                       borderRadius: BorderRadius.circular(40),
                       child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.white30,
                           shape: BoxShape.circle,
                         ),
-                        child: Obx(() => Icon(
-                          layout.isPlaying.value
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                          color: Colors.black,
-                          size: 32,
-                        )),
+                        child: Center(
+                          child: Icon(
+                            layout.isPlaying.value
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                            size: 36,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 20),
                     IconButton(
-                      icon: const Icon(Icons.skip_next,
-                          color: Colors.white, size: 32),
+                      icon: const Icon(Icons.skip_next_rounded, size: 30),
+                      color: Colors.white,
                       onPressed: layout.skipNext,
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.repeat, color: Colors.white60),
-                      onPressed: () {},
                     ),
                   ],
                 ),
+
+                const Spacer(),
               ],
             );
           }),
